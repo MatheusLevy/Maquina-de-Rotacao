@@ -3,6 +3,15 @@
 import argparse
 from collections import deque
 
+#Utilidade
+#Serve para verificar se uma letra pertence a nosso conjuto de caracteres válidos.
+#A ideia é poder preservar pontuação durante a cifragem.
+def validarCaracter(letra):
+    validos = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    if letra not in validos:
+        return False
+    return True
+
 # Atributos do Rotor
 # Passo = é a quantidade de rotações dados, as rotações avanção de 1 em 1 e tem a valor máximo de 25 indo de 0 até 25, ou seja 26 
 # Saida = São as letras que ficam a direita do rotor correspondendo  a saida do rotor
@@ -16,7 +25,7 @@ class Rotor:
         self.prox = None        #prox é um direcionador para o proximo rotor, funciona como o cabo que liga dois rotores         
         self.saida = saida      #A entrada é todo mapeamento de Letrar para valores. É um dicionário onde cada letra tem seu respectivo valor
         self.entrada = {        #Assim como a saida.
-            "A": 1,             
+            "A": 1,              
             "B": 2,
             "C": 3,
             "D": 4,
@@ -115,11 +124,13 @@ class Maquina:
     #Função de cifragem da máquina
     #@Parametros:
     #Texto: Texto a ser cifrado
+    
     def cifrar(self, Texto):
+
         TextoCifrado = ""
         i=0
         for letra in Texto:        #Percorre o texto letra a letra
-            if(letra != ' '):      #pulando os espaços em branco
+            if(validarCaracter(letra)):      #pulando os espaços em branco
                 for i in range(len(self.rotores)):              #Aqui percorremos os rotores pegando passando a letra na entrada do primeiro cilindro
                     letra = self.rotores[i].cifrar(letra)       #pegando a saida do primeiro cilindro e passando como entrada para o segundo cilindro e assim por diante até o último cilindro
                 self.rotores[0].passar()  #-------              #Após terminar de cifrar uma letra passando por todos os rotores devemos executar o passo no primeiro rotor
@@ -139,7 +150,7 @@ class Maquina:
         TextoDecifrado = ""
         i = len(maquina_inversa.rotores)-1       #Pegamos a quantidade de rotores/cilindros da máquina
         for letra in Texto:                      #Iremos percorrer o texto cifrado letra a letra
-            if(letra != ' '):                    #pulando os espaços
+            if(validarCaracter(letra)):                    #pulando os espaços
                 for j in range(i, -1, -1):       #Percorreremos os rotores na ordem inversa, do último até o primeiro
                     letra = maquina_inversa.rotores[j].decifrar(letra) #Dessa vez usaremos a função decifra dos rotores
                 maquina_inversa.rotores[0].passar()   #Após decifrar a letra iremos passar o primeiro rotor
